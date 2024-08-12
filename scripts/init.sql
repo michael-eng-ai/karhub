@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS karhub_db;
+USE airflow;

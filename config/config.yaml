@@ -1,0 +1,19 @@
+input:
+  despesas_file: "data/raw/gdvDespesasExcel.csv"
+  receitas_file: "data/raw/gdvReceitasExcel.csv"
+
+output:
+  processed_file: 'data/processed/budget_data.csv'
+
+api:
+  currency_url: 'https://economia.awesomeapi.com.br/json/daily/USD-BRL'
+  currency_pair: "USD-BRL"
+  target_date: "2022-06-22"
+
+bigquery:
+  project_id: 'your-project-id'
+  dataset_id: 'karhub_db'
+  table_id: 'budget_data'
+
+database:
+  path: '/db/karhub_db.db'

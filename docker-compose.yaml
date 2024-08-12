@@ -1,0 +1,68 @@
+version: '3.8'
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: karhub_db
+      MYSQL_USER: airflow
+      MYSQL_PASSWORD: airflow
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  webserver:
+    image: apache/airflow:2.7.0-python3.10
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+mysqldb://airflow:airflow@mysql/airflow
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    command: webserver
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./config:/opt/airflow/config
+      - ./src:/opt/airflow/src
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+  scheduler:
+    image: apache/airflow:2.7.0-python3.10
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: mysql+mysqldb://airflow:airflowpassword@mysql/airflow
+    command: scheduler
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./config:/opt/airflow/config
+      - ./src:/opt/airflow/src
+    depends_on:
+      - webserver
+
+  python-env:
+    image: python:3.10
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./requirements.txt:/app/requirements.txt
+    working_dir: /app
+    command: >
+      /bin/bash -c "pip install --no-cache-dir -r requirements.txt && 
+                    pytest tests"
+    depends_on:
+      - mysql
+
+  init-db:
+    image: apache/airflow:2.7.0-python3.10
+    command: airflow db init
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
