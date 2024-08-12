@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este projeto implementa um pipeline ETL (Extract, Transform, Load) para processar dados de finanças pessoais. O pipeline extrai dados de despesas e receitas de fontes específicas, transforma esses dados aplicando conversões de moeda e outras operações, e finalmente carrega os dados processados em um banco de dados SQLite.
+Este projeto implementa um pipeline ETL (Extract, Transform, Load) para processar dados de finanças pessoais. O pipeline extrai dados de despesas e receitas de fontes específicas, transforma esses dados aplicando conversões de moeda e outras operações, e finalmente carrega os dados processados em um banco de dados MySQL e/ou Bigquery.
 
 ## Estrutura do Projeto
 sao_paulo_budget_etl/
@@ -14,6 +14,7 @@ sao_paulo_budget_etl/
 │   ├── extract.py
 │   ├── transform.py
 │   ├── load.py
+│   ├── load-bq.py
 │   └── utils.py
 ├── tests/
 │   ├── __init__.py
@@ -71,8 +72,8 @@ Obtém dados de taxa de câmbio.
 Aplica conversões de moeda.
 Realiza outras transformações necessárias nos dados.
 
-8. Carregamento (load.py):
-Cria e gerencia a conexão com o banco de dados SQLite.
+8. Carregamento (load.py/load-bq.py):
+Cria e gerencia a conexão com o banco de dados Mysql ou BQ.
 Carrega os dados transformados no banco de dados.
 
 9. Utilidades (utils.py):
